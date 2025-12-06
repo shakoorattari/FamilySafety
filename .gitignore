@@ -1,0 +1,66 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.cache
+
+# Rider
+.idea/
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# Build output
+publish/
+out/
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+coverage*/
+
+# User-specific files
+*.rsuser
+*.dbmdl
+*.jfm
+launchSettings.json
+
+# Windows Thumbnail Cache
+Thumbs.db
+ehthumbs.db
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Secrets
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+*.pfx
+*.key
+secrets.json
+
+# Docker
+docker-compose.override.yml
+
+# EF Core Migrations
+# Keep migrations but ignore local db files
+*.mdf
+*.ldf
+
+# Misc
+*.log
+*.tmp
+*.temp
