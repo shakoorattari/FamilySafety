@@ -88,3 +88,17 @@ public record GeofenceDto
     public bool NotifyOnEntry { get; init; }
     public bool NotifyOnExit { get; init; }
 }
+
+/// <summary>
+/// Update location request
+/// </summary>
+public record UpdateLocationRequest
+{
+    public double Latitude { get; init; }
+    public double Longitude { get; init; }
+    public double? Altitude { get; init; }
+    public double? Accuracy { get; init; }
+    public double? Speed { get; init; }
+    public double? Bearing { get; init; }
+    public int? BatteryLevel { get; init; }
+}

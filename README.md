@@ -87,7 +87,7 @@ The API will be available at:
 
 - HTTP: <http://localhost:5000>
 - HTTPS: <https://localhost:5001>
-- Swagger UI: <https://localhost:5001> (root URL in development)
+- Swagger UI: <https://localhost:5001/swagger> (in development)
 
 ## 📚 API Endpoints
 
