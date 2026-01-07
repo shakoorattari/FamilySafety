@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using FamilySafety.Application.Commands;
+using FamilySafety.Application.Queries;
 using FamilySafety.Shared.DTOs;
 
 namespace FamilySafety.API.Controllers;
@@ -72,8 +73,16 @@ public class LocationsController : BaseApiController
     public async Task<IActionResult> GetFamilyLocations(Guid familyGroupId)
     {
         _logger.LogInformation("Getting family locations for group {FamilyGroupId}", familyGroupId);
-        // TODO: Implement with MediatR query
-        return Ok(new { Message = $"Locations for family {familyGroupId}" });
+        
+        var query = new GetFamilyLocationsQuery { FamilyGroupId = familyGroupId };
+        var result = await _mediator.Send(query);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Data);
+        }
+
+        return BadRequest(new { Error = result.Error });
     }
 
     /// <summary>
@@ -87,7 +96,20 @@ public class LocationsController : BaseApiController
     public async Task<IActionResult> GetLocationHistory(Guid userId, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
     {
         _logger.LogInformation("Getting location history for user {UserId}", userId);
-        // TODO: Implement with MediatR query
-        return Ok(new { Message = $"Location history for user {userId}" });
+        
+        var query = new GetLocationHistoryQuery 
+        { 
+            UserId = userId,
+            From = from,
+            To = to
+        };
+        var result = await _mediator.Send(query);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Data);
+        }
+
+        return BadRequest(new { Error = result.Error });
     }
 }
