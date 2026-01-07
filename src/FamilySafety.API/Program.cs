@@ -37,6 +37,7 @@ builder.Services.AddApiVersioning(options =>
 
 // Add Swagger/OpenAPI with .NET 10 native OpenAPI support
 builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 
 // Add health checks
 builder.Services.AddHealthChecks()
@@ -68,6 +69,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.MapOpenApi();
 }
 

@@ -50,4 +50,9 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         return _dbSet.AsQueryable();
     }
+
+    public virtual async Task<List<T>> ToListAsync(IQueryable<T> query, CancellationToken cancellationToken = default)
+    {
+        return await query.ToListAsync(cancellationToken);
+    }
 }

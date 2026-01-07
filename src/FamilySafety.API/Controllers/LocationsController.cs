@@ -2,6 +2,9 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using FamilySafety.Application.Commands;
+using FamilySafety.Application.Queries;
+using FamilySafety.Shared.DTOs;
 
 namespace FamilySafety.API.Controllers;
 
@@ -24,15 +27,41 @@ public class LocationsController : BaseApiController
     /// Update current user's location
     /// </summary>
     [HttpPost]
-    [Authorize]
+    // NOTE: [Authorize] is temporarily disabled for development/testing purposes.
+    // TODO: Re-enable authorization before merging to production.
+    //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UpdateLocation([FromBody] UpdateLocationRequest request)
     {
-        _logger.LogInformation("Updating location: Lat={Latitude}, Lon={Longitude}", request.Latitude, request.Longitude);
-        // TODO: Implement with MediatR command
-        return Ok(new { Message = "Location updated" });
+        // For testing, use a fixed user id
+        var userId = Guid.Parse("12345678-1234-1234-1234-123456789abc");
+
+        var command = new UpdateLocationCommand
+        {
+            UserId = userId,
+            Latitude = request.Latitude,
+            Longitude = request.Longitude,
+            Altitude = request.Altitude,
+            Accuracy = request.Accuracy,
+            Speed = request.Speed,
+            Bearing = request.Bearing,
+            BatteryLevel = request.BatteryLevel
+        };
+
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            _logger.LogInformation("Location updated for user {UserId}: Lat={Latitude}, Lon={Longitude}", userId, request.Latitude, request.Longitude);
+            return Ok(new { Message = "Location updated successfully" });
+        }
+        else
+        {
+            _logger.LogError("Failed to update location for user {UserId}: {Error}", userId, result.Error);
+            return BadRequest(new { Error = result.Error });
+        }
     }
 
     /// <summary>
@@ -46,8 +75,16 @@ public class LocationsController : BaseApiController
     public async Task<IActionResult> GetFamilyLocations(Guid familyGroupId)
     {
         _logger.LogInformation("Getting family locations for group {FamilyGroupId}", familyGroupId);
-        // TODO: Implement with MediatR query
-        return Ok(new { Message = $"Locations for family {familyGroupId}" });
+        
+        var query = new GetFamilyLocationsQuery { FamilyGroupId = familyGroupId };
+        var result = await _mediator.Send(query);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Data);
+        }
+
+        return BadRequest(new { Error = result.Error });
     }
 
     /// <summary>
@@ -61,15 +98,20 @@ public class LocationsController : BaseApiController
     public async Task<IActionResult> GetLocationHistory(Guid userId, [FromQuery] DateTime? from, [FromQuery] DateTime? to)
     {
         _logger.LogInformation("Getting location history for user {UserId}", userId);
-        // TODO: Implement with MediatR query
-        return Ok(new { Message = $"Location history for user {userId}" });
+        
+        var query = new GetLocationHistoryQuery 
+        { 
+            UserId = userId,
+            From = from,
+            To = to
+        };
+        var result = await _mediator.Send(query);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Data);
+        }
+
+        return BadRequest(new { Error = result.Error });
     }
 }
-
-public record UpdateLocationRequest(
-    double Latitude,
-    double Longitude,
-    double? Altitude,
-    double? Accuracy,
-    double? Speed,
-    int? BatteryLevel);

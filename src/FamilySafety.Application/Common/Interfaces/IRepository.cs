@@ -11,6 +11,7 @@ public interface IRepository<T> where T : class
     Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
     Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
     IQueryable<T> Query();
+    Task<List<T>> ToListAsync(IQueryable<T> query, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
