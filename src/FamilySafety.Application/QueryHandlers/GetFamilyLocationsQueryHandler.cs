@@ -38,23 +38,26 @@ public class GetFamilyLocationsQueryHandler : IRequestHandler<GetFamilyLocations
         }
 
         // Get the latest location for each family member
-        var latestLocations = _locationRepository
+        // Build the query to execute at database level
+        var query = _locationRepository
             .Query()
             .Where(lh => familyMembers.Contains(lh.UserId))
-            .AsEnumerable()
             .GroupBy(lh => lh.UserId)
-            .Select(g => g.OrderByDescending(lh => lh.RecordedAt).First())
-            .Select(lh => new LocationDto
-            {
-                UserId = lh.UserId,
-                Latitude = lh.Latitude,
-                Longitude = lh.Longitude,
-                Accuracy = lh.Accuracy,
-                BatteryLevel = lh.BatteryLevel,
-                Address = lh.Address,
-                RecordedAt = lh.RecordedAt
-            })
-            .ToList();
+            .Select(g => g.OrderByDescending(lh => lh.RecordedAt).First());
+
+        // Execute the query and materialize results
+        var latestLocationEntities = await _locationRepository.ToListAsync(query, cancellationToken);
+
+        var latestLocations = latestLocationEntities.Select(lh => new LocationDto
+        {
+            UserId = lh.UserId,
+            Latitude = lh.Latitude,
+            Longitude = lh.Longitude,
+            Accuracy = lh.Accuracy,
+            BatteryLevel = lh.BatteryLevel,
+            Address = lh.Address,
+            RecordedAt = lh.RecordedAt
+        }).ToList();
 
         return Result<IEnumerable<LocationDto>>.Success(latestLocations);
     }

@@ -27,7 +27,9 @@ public class LocationsController : BaseApiController
     /// Update current user's location
     /// </summary>
     [HttpPost]
-    //[Authorize] // Temporarily disabled for testing
+    // NOTE: [Authorize] is temporarily disabled for development/testing purposes.
+    // TODO: Re-enable authorization before merging to production.
+    //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

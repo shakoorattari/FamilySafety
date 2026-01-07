@@ -18,6 +18,12 @@ public class GetFamilyLocationsQueryHandlerTests
     {
         _mockFamilyMemberRepository = new Mock<IRepository<FamilyMember>>();
         _mockLocationRepository = new Mock<IRepository<LocationHistory>>();
+        
+        // Setup default behavior for ToListAsync
+        _mockLocationRepository
+            .Setup(r => r.ToListAsync(It.IsAny<IQueryable<LocationHistory>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((IQueryable<LocationHistory> q, CancellationToken ct) => q != null ? q.ToList() : new List<LocationHistory>());
+        
         _handler = new GetFamilyLocationsQueryHandler(
             _mockFamilyMemberRepository.Object,
             _mockLocationRepository.Object);
